@@ -1,0 +1,30 @@
+﻿@using ToDoApp.Services;
+@inject IToDoService _todoService;
+<EditForm Model="@NewItem" OnSubmit="@ItemAdded">
+    <div style="display: flex; align-items: center; width: 400px;">
+        <div style="margin-right: 10px">Text:</div>
+        <InputText @bind-Value="NewItem.Text" class="form-control" style="margin-right: 10px" id="Item" />
+        <input type="submit" class="btn btn-primary" style="margin-right: 10px" value="Add" />
+        <input type="reset" class="btn btn-secondary" value="Clear" />
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Action OnItemAdded { get; set; }
+
+    private ToDoItem NewItem = new ToDoItem("");
+
+    public void ItemAdded()
+    {
+        var newItem = new ToDoItem(NewItem.Text);
+        NewItem.Text = "";
+        _todoService.Add(newItem);
+
+        if (OnItemAdded != null)
+        {
+            OnItemAdded();
+        }
+    }
+}
+
