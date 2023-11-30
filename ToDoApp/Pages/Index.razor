@@ -13,7 +13,18 @@
     <div style="display: flex; flex-direction: column">
         @foreach (var todo in Todos)
         {
+
             <div style="display: flex; margin-bottom: 10px;">
+
+                <Button Type="ButtonType.Button" Color="ButtonColor.Primary" @onclick="ShowContentAsync">Show content</Button>
+                <Collapse @ref="collapse1">
+                    <Card>
+                        <CardBody>
+                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                        </CardBody>
+                    </Card>
+                </Collapse>
+
                 <div style="display: flex; align-items: center;margin-bottom: 10px;">
                     <div class="@ItemClass(todo)" style="width: 280px;">@todo.Text</div>
                 </div>
@@ -29,7 +40,7 @@
                         <button class="btn btn-primary" onclick="@(() => CompleteItem(todo))">Complete</button>
                     </div>
                 }
-                <div>
+                <div style="width: 110px">
                     <button class="btn btn-danger" onclick="@(() => DeleteItem(todo))">Delete</button>
                 </div>
             </div>
@@ -74,4 +85,9 @@
         _todoService.Uncomplete(item);
         ItemsChanged();
     }
+
+    Collapse collapse1 = default!;
+    
+    private async Task ShowContentAsync() => await collapse1.ShowAsync();
+
 }
