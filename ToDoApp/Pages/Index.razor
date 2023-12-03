@@ -23,17 +23,17 @@
                 @if (todo.Completed)
                 {
                     <div style="width: 120px">
-                        <button class="btn btn-primary" onclick="@(() => UncompleteItem(todo))">Uncomplete</button>
+                        <button class="ico-check" role="img" aria-label="Check" onclick="@(() => UncompleteItem(todo))"></button>
                     </div>
                 }
                 @if (!todo.Completed)
                 {
                     <div style="width: 120px">
-                        <button class="btn btn-primary" onclick="@(() => CompleteItem(todo))">Complete</button>
+                        <button class="ico-check" role="img" aria-label="Check" onclick="@(() => CompleteItem(todo))"></button>
                     </div>
                 }
                 <div style="width: 110px">
-                    <button class="btn btn-danger" onclick="@(() => DeleteItem(todo))">Delete</button>
+                    <button class="ico-times" role="img" aria-label="Delete" onclick="@(() => DeleteItem(todo))"></button>
                 </div>
             </div>
 
@@ -49,22 +49,22 @@
             <div style="display: flex; margin-bottom: 10px;">
 
                 <div style="display: flex; align-items: center;margin-bottom: 10px;">
-                    <div style="width: 280px;">@subTodo.Text</div>
+                    <div class="@ItemClass(subTodo)" style="width: 280px;">@subTodo.Text</div>
                 </div>
                 @if (subTodo.Completed)
                 {
                     <div style="width: 120px">
-                        <button class="btn btn-primary" onclick="@(() => UncompleteItem(subTodo))">Uncomplete</button>
+                        <button class="ico-check" role="img" aria-label="Check" onclick="@(() => UncompleteItem(subTodo))"></button>
                     </div>
                 }
                 @if (!subTodo.Completed)
                 {
                     <div style="width: 120px">
-                        <button class="btn btn-primary" onclick="@(() => CompleteItem(subTodo))">Complete</button>
+                        <button class="ico-check" role="img" aria-label="Check"  onclick="@(() => CompleteItem(subTodo))"></button>
                     </div>
                 }
                 <div style="width: 110px">
-                    <button class="btn btn-danger" onclick="@(() => DeleteSubItem(subTodo, todo))">Delete</button>
+                    <button class="ico-times" role="img" aria-label="Delete" onclick="@(() => DeleteSubItem(subTodo, todo))"></button>
                 </div>
             </div>
                      
