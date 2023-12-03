@@ -11,6 +11,8 @@
 
 @code {
     [Parameter]
+    public ToDoItem CurrentToDoItem { get; set; }
+    [Parameter]
     public Action OnItemAdded { get; set; }
 
     private ToDoItem NewItem = new ToDoItem("");
@@ -18,8 +20,20 @@
     public void ItemAdded()
     {
         var newItem = new ToDoItem(NewItem.Text);
-        NewItem.Text = "";
-        _todoService.Add(newItem);
+
+        if (CurrentToDoItem != null)
+        {
+            if (CurrentToDoItem.SubItems == null)
+            {
+                CurrentToDoItem.SubItems = new List<ToDoItem>();
+            }
+            CurrentToDoItem.SubItems.Add(newItem);
+        }
+        else
+        {
+            //NewItem.Text = "";
+            _todoService.Add(newItem);
+        }
 
         if (OnItemAdded != null)
         {

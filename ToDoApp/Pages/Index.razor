@@ -13,19 +13,11 @@
     <div style="display: flex; flex-direction: column">
         @foreach (var todo in Todos)
         {
-
             <div style="display: flex; margin-bottom: 10px;">
 
-                <Button Type="ButtonType.Button" Color="ButtonColor.Primary" @onclick="ShowContentAsync">Show content</Button>
-                <Collapse @ref="collapse1">
-                    <Card>
-                        <CardBody>
-                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-                        </CardBody>
-                    </Card>
-                </Collapse>
-
                 <div style="display: flex; align-items: center;margin-bottom: 10px;">
+                   <button class="btn btn-primary" @onclick="ShowContentAsync">Show more</button>
+                 
                     <div class="@ItemClass(todo)" style="width: 280px;">@todo.Text</div>
                 </div>
                 @if (todo.Completed)
@@ -44,6 +36,43 @@
                     <button class="btn btn-danger" onclick="@(() => DeleteItem(todo))">Delete</button>
                 </div>
             </div>
+
+                 <Card>
+                            <CardBody>
+        
+                                 <ToDoItemForm OnItemAdded="@ItemsChanged" CurrentToDoItem=todo />
+        
+    
+                        @foreach (var subTodo in todo.SubItems){
+                                     
+                   
+            <div style="display: flex; margin-bottom: 10px;">
+
+                <div style="display: flex; align-items: center;margin-bottom: 10px;">
+                    <div style="width: 280px;">@subTodo.Text</div>
+                </div>
+                @if (subTodo.Completed)
+                {
+                    <div style="width: 120px">
+                        <button class="btn btn-primary" onclick="@(() => UncompleteItem(subTodo))">Uncomplete</button>
+                    </div>
+                }
+                @if (!subTodo.Completed)
+                {
+                    <div style="width: 120px">
+                        <button class="btn btn-primary" onclick="@(() => CompleteItem(subTodo))">Complete</button>
+                    </div>
+                }
+                <div style="width: 110px">
+                    <button class="btn btn-danger" onclick="@(() => DeleteSubItem(subTodo, todo))">Delete</button>
+                </div>
+            </div>
+                     
+            }
+                              </CardBody>
+                        </Card>
+              
+ 
         }
     </div>
 </div>
@@ -51,11 +80,17 @@
 
 @code{
     private IList<ToDoItem> Todos { get; set; } = new List<ToDoItem>();
+    private ToDoItem CurrentToDo { get; set; }
+    private ToDoItem NewItem = new ToDoItem("");
+
 
     protected override void OnInitialized()
     {
         Todos = _todoService.GetAll().ToList();
+        CurrentToDo = _todoService.GetSelected();
     }
+
+  
 
     public string ItemClass(ToDoItem item)
     {
@@ -74,6 +109,12 @@
         ItemsChanged();
     }
 
+    public void DeleteSubItem(ToDoItem subTodoItem, ToDoItem item)
+    {
+        _todoService.DeleteSubTodo(subTodoItem, item);
+        ItemsChanged();
+    }
+
     public void CompleteItem(ToDoItem item)
     {
         _todoService.Complete(item);
@@ -86,8 +127,12 @@
         ItemsChanged();
     }
 
-    Collapse collapse1 = default!;
-    
-    private async Task ShowContentAsync() => await collapse1.ShowAsync();
+    Collapse collapsableSubList = default!;
+
+    private async Task ShowContentAsync()
+    {
+        await collapsableSubList.ToggleAsync();
+       
+    }  
 
 }
