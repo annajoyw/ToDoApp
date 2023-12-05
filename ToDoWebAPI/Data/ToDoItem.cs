@@ -1,4 +1,6 @@
-﻿namespace ToDoApp
+﻿using ToDoApp.Data;
+
+namespace ToDoApp
 {
     public class ToDoItem
     {
@@ -15,6 +17,7 @@
 
         public string Text { get; set; }
         public bool Completed { get; set; }
+        public DateTime Deadline { get; set; }
         public List<ToDoItem> SubItems { get; set; } = new List<ToDoItem> { };
     }
 }

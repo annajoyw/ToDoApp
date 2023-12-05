@@ -1,6 +1,9 @@
 ﻿@page "/"
 @using ToDoApp.Services;
 @inject IToDoService _todoService;
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
 
 <PageTitle>Todo List</PageTitle>
 
@@ -22,13 +25,13 @@
                 </div>
                 @if (todo.Completed)
                 {
-                    <div style="width: 120px">
+                    <div style="width: 100px">
                         <button class="ico-check" role="img" aria-label="Check" onclick="@(() => UncompleteItem(todo))"></button>
                     </div>
                 }
                 @if (!todo.Completed)
                 {
-                    <div style="width: 120px">
+                    <div style="width: 100px">
                         <button class="ico-check" role="img" aria-label="Check" onclick="@(() => CompleteItem(todo))"></button>
                     </div>
                 }
@@ -53,13 +56,13 @@
                 </div>
                 @if (subTodo.Completed)
                 {
-                    <div style="width: 120px">
+                    <div style="width: 100px">
                         <button class="ico-check" role="img" aria-label="Check" onclick="@(() => UncompleteItem(subTodo))"></button>
                     </div>
                 }
                 @if (!subTodo.Completed)
                 {
-                    <div style="width: 120px">
+                    <div style="width: 100px">
                         <button class="ico-check" role="img" aria-label="Check"  onclick="@(() => CompleteItem(subTodo))"></button>
                     </div>
                 }
@@ -84,9 +87,25 @@
     private ToDoItem NewItem = new ToDoItem("");
 
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        Todos = _todoService.GetAll().ToList();
+        var request = new HttpRequestMessage(HttpMethod.Get,
+            "https://localhost:7003/ToDo");
+
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+        // var deserialized = new;
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            var deserialized = await JsonSerializer.DeserializeAsync<IEnumerable<ToDoItem>>(responseStream);
+            Todos = deserialized.ToList();
+             StateHasChanged();
+           // ItemsChanged();
+        }
+
+       // Todos = _todoService.GetAll().ToList();
         CurrentToDo = _todoService.GetSelected();
     }
 
@@ -134,5 +153,4 @@
         await collapsableSubList.ToggleAsync();
        
     }  
-
 }

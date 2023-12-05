@@ -1,4 +1,6 @@
-﻿namespace ToDoApp.Services
+﻿using ToDoApp.Data;
+
+namespace ToDoApp.Services
 {
     public class ToDoService : IToDoService
     {
@@ -7,10 +9,10 @@
 
         public ToDoService()
         {
-            _todoItems = new List<ToDoItem> {
-            new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") })
-        };
+            //_todoItems = new List<ToDoItem> {
+            //new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") })
         }
+        
 
         public void Add(ToDoItem item)
         {

@@ -1,4 +1,6 @@
-﻿namespace ToDoApp.Services
+﻿using ToDoApp.Data;
+
+namespace ToDoApp.Services
 {
     public interface IToDoService
     {
