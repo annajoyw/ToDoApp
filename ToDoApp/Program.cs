@@ -1,11 +1,9 @@
-using ToDoApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<IToDoService, ToDoService>();
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddHttpClient();
 //builder.Services.AddControllers()..AddNewtonsoftJson();
@@ -28,5 +26,7 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+app.MapControllers();
 
 app.Run();

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoApp;
 using ToDoApp.Data;
+using ToDoApp.Services;
 
 namespace ToDoWebAPI.Controllers
 {
@@ -8,11 +9,10 @@ namespace ToDoWebAPI.Controllers
     [Route("[controller]")]
     public class ToDoController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        //private readonly IList<ToDoItem> _todoItems = new List<ToDoItem> {
+        //    new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }) };
 
+        private IToDoService _todoService = new ToDoService();
         private readonly ILogger<ToDoController> _logger;
 
         public ToDoController(ILogger<ToDoController> logger)
@@ -20,23 +20,59 @@ namespace ToDoWebAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetToDos")]
+        [Route("get")]
+        [HttpGet]
         public IEnumerable<ToDoItem> Get()
         {
-            return new List<ToDoItem> {
-            new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }) };
+            return _todoService.GetItems();
         }
 
-        //[HttpGet(Name = "GetWeatherForecast")]
-        //public IEnumerable<WeatherForecast> Get()
-        //{
-        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        //    {
-        //        Date = DateTime.Now.AddDays(index),
-        //        TemperatureC = Random.Shared.Next(-20, 55),
-        //        Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        //    })
-        //    .ToArray();
-        //}
+        [Route("add-item")]
+        [HttpPost]
+        public IEnumerable<ToDoItem> AddItem(ToDoItem newItem)
+        {
+            _todoService.AddItem(newItem);
+            return _todoService.GetItems();
+        }
+
+        [Route("add-child-item")]
+        [HttpPost]
+        public IEnumerable<ToDoItem> AddChildItem(ToDoSubItemWrapper newChildItem)
+        {
+            _todoService.AddChildItem(newChildItem);
+            return _todoService.GetItems();
+        }
+
+        [Route("delete")]
+        [HttpPost]
+        public IEnumerable<ToDoItem> Delete(ToDoItem item)
+        {
+            _todoService.DeleteItem(item);
+            return _todoService.GetItems();
+        }
+
+        [Route("delete-child-item")]
+        [HttpPost]
+        public IEnumerable<ToDoItem> DeleteChildItem(ToDoSubItemWrapper childItem)
+        {
+            _todoService.DeleteChildItem(childItem);
+            return _todoService.GetItems();
+        }
+
+        [Route("toggle-completed")]
+        [HttpPost]
+        public IEnumerable<ToDoItem> ToggleCompleted(ToDoItem item)
+        {
+             _todoService.ToggleCompleted(item);
+            return _todoService.GetItems();
+        }
+
+        [Route("toggle-completed-child-item")]
+        [HttpPost]
+        public IEnumerable<ToDoItem> ToggleCompletedChildItem(ToDoSubItemWrapper childItem)
+        {
+            _todoService.ToggleCompletedChildItem(childItem);
+            return _todoService.GetItems();
+        }
     }
 }

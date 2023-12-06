@@ -10,11 +10,19 @@ namespace ToDoApp
         {
             Text = text;
         }
-        [JsonConstructor]
+
         public ToDoItem(string text, List<ToDoItem> subItems)
         {
             Text = text;
             SubItems = subItems;
+        }
+
+        [JsonConstructor]
+        public ToDoItem(string text, List<ToDoItem> subItems, DateTime deadline)
+        {
+            Text = text;
+            SubItems = subItems;
+            Deadline = deadline;
         }
         [JsonPropertyName("text")]
         public string Text { get; set; }

@@ -2,10 +2,10 @@
 
 namespace ToDoApp.Data
 {
-    public class ToDoSubItem
+    public class ToDoSubItemWrapper
     {
         [JsonConstructor]
-        public ToDoSubItem(ToDoItem parentTodo, ToDoItem childTodo)
+        public ToDoSubItemWrapper(ToDoItem parentTodo, ToDoItem childTodo)
         {
             ParentTodo = parentTodo;
             ChildTodo = childTodo;

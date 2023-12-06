@@ -13,13 +13,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AttributeRouting v1"));
 }
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+//app.MapControllers();
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.Run();

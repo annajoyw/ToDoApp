@@ -1,5 +1,7 @@
-﻿@using ToDoApp.Services;
-@inject IToDoService _todoService;
+﻿@using ToDoApp.Data
+@inject IHttpClientFactory ClientFactory
+@using System.Text.Json
+@using System.Text.Json.Serialization
 <EditForm Model="@NewItem" OnSubmit="@ItemAdded">
     <div style="display: flex; align-items: center; width: 400px;">
         <div style="margin-right: 10px">Text:</div>
@@ -17,23 +19,42 @@
 
     private ToDoItem NewItem = new ToDoItem("");
 
-    public void ItemAdded()
+    public async void ItemAdded()
     {
-        var newItem = new ToDoItem(NewItem.Text);
+         var client = ClientFactory.CreateClient();
 
-        if (CurrentToDoItem != null)
+         var request = new HttpRequestMessage(HttpMethod.Post,
+           "https://localhost:7003/ToDo/add-child-item");
+            var subItemWrapper = new ToDoSubItem(CurrentToDoItem, NewItem);
+        request.Content = JsonContent.Create(subItemWrapper);
+      
+
+         var response = await client.SendAsync(request);
+        
+        if (response.IsSuccessStatusCode)
         {
-            if (CurrentToDoItem.SubItems == null)
-            {
-                CurrentToDoItem.SubItems = new List<ToDoItem>();
-            }
-            CurrentToDoItem.SubItems.Add(newItem);
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            var deserialized = await JsonSerializer.DeserializeAsync<IEnumerable<ToDoItem>>(responseStream);
+           
+           // Todos = deserialized.ToList();
+            StateHasChanged();
         }
-        else
-        {
-            //NewItem.Text = "";
-            _todoService.Add(newItem);
-        }
+
+        //var newItem = new ToDoItem(NewItem.Text);
+
+        //if (CurrentToDoItem != null)
+        //{
+        //    if (CurrentToDoItem.SubItems == null)
+        //    {
+        //        CurrentToDoItem.SubItems = new List<ToDoItem>();
+        //    }
+        //    CurrentToDoItem.SubItems.Add(newItem);
+        //}
+        //else
+        //{
+        //    //NewItem.Text = "";
+        //    _todoService.Add(newItem);
+        //}
 
         if (OnItemAdded != null)
         {

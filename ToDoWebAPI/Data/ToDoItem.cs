@@ -1,4 +1,5 @@
-﻿using ToDoApp.Data;
+﻿using System.Text.Json.Serialization;
+using ToDoApp.Data;
 
 namespace ToDoApp
 {
@@ -15,9 +16,21 @@ namespace ToDoApp
             SubItems = subItems;
         }
 
+        [JsonConstructor]
+        public ToDoItem(string text, List<ToDoItem> subItems, DateTime deadline)
+        {
+            Text = text;
+            SubItems = subItems;
+            Deadline = deadline;
+        }
+
+        [JsonPropertyName("text")]
         public string Text { get; set; }
+        [JsonPropertyName("completed")]
         public bool Completed { get; set; }
+        [JsonPropertyName("deadline")]
         public DateTime Deadline { get; set; }
+        [JsonPropertyName("subItems")]
         public List<ToDoItem> SubItems { get; set; } = new List<ToDoItem> { };
     }
 }
