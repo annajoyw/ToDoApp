@@ -12,12 +12,13 @@ namespace ToDoWebAPI.Controllers
         //private readonly IList<ToDoItem> _todoItems = new List<ToDoItem> {
         //    new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }) };
 
-        private IToDoService _todoService = new ToDoService();
+        private IToDoService _todoService;
         private readonly ILogger<ToDoController> _logger;
 
-        public ToDoController(ILogger<ToDoController> logger)
+        public ToDoController(ILogger<ToDoController> logger, IToDoService toDoService)
         {
             _logger = logger;
+            _todoService = toDoService;
         }
 
         [Route("get")]
@@ -31,6 +32,7 @@ namespace ToDoWebAPI.Controllers
         [HttpPost]
         public IEnumerable<ToDoItem> AddItem(ToDoItem newItem)
         {
+
             _todoService.AddItem(newItem);
             return _todoService.GetItems();
         }

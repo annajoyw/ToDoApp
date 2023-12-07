@@ -4,15 +4,17 @@ namespace ToDoApp.Services
 {
     public class ToDoService : IToDoService
     {
-        private readonly IList<ToDoItem> _todoItems;
-       // private readonly ToDoItem _selectedItem;
+        private readonly IList<ToDoItem> _todoItems = new List<ToDoItem>
+        {
+            new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }, DateTime.Now) };
+        // private readonly ToDoItem _selectedItem;
 
         public ToDoService()
         {
-            _todoItems = new List<ToDoItem> {
-            new ToDoItem("Wash Clothes", 
-                         new List<ToDoItem> { new ToDoItem("Get Detergent") },
-                         DateTime.Now.AddDays(1))};
+            //_todoItems = new List<ToDoItem> {
+            //new ToDoItem("Wash Clothes", 
+            //             new List<ToDoItem> { new ToDoItem("Get Detergent") },
+            //             DateTime.Now.AddDays(1))};
         }
 
         public void AddChildItem(ToDoSubItemWrapper item)
@@ -23,6 +25,7 @@ namespace ToDoApp.Services
 
         public void AddItem(ToDoItem item)
         {
+            item.Deadline = DateTime.Now.AddDays(1);
             _todoItems.Add(item);
         }
 

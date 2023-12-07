@@ -29,7 +29,7 @@ namespace ToDoApp
         [JsonPropertyName("completed")]
         public bool Completed { get; set; }
         [JsonPropertyName("deadline")]
-        public DateTime Deadline { get; set; }
+        public DateTime Deadline { get; set; } = DateTime.Now.AddDays(1);
         [JsonPropertyName("subItems")]
         public List<ToDoItem> SubItems { get; set; } = new List<ToDoItem> { };
     }

@@ -21,7 +21,7 @@
 </div>
 
 <div class="border" style="padding: 20px; margin-top: 20px;">
-    <div style="display: flex; flex-direction: column">
+    <div style="display: flex; flex-direction: column" class="@highlightStyle">
         @foreach (var todo in Todos)
         {
             <div style="display: flex; margin-bottom: 10px;">
@@ -46,14 +46,32 @@
                     <button class="ico-times" role="img" aria-label="Delete" onclick="@(() => DeleteItem(todo))"></button>
                 </div>
                 <div>
-                    <DateInput @bind-Value=todo.Deadline Placeholder="Enter Date" />
+                    <DateInput @oninput="@(() => HandleDateChange())" @bind-Value="selectedDate" Placeholder="Enter Date" />
                 </div>
 
             </div>
 
             <Card>
                 <CardBody>
-                    <ToDoItemForm OnItemAdded="@GetItems" CurrentToDoItem=todo />
+                    @* <ToDoItemForm OnItemAdded="@GetItems" CurrentToDoItem=todo />*@
+                    @* <form onSubmit="@(() => ChildItemAdded(todo))">
+                        <div class="form-group">
+                        <label for="inputField">Enter Text:</label>
+                        <input type="text" class="form-control" id="inputField" @bind="@NewItem.Text" />
+                        </div>*@
+                    <!-- Hidden input to hold the parameter value -->
+                    @*<input type="hidden" id="hiddenParam" @bind="@todo" />*@
+
+                    @*  <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>*@ <EditForm Model="@NewItem" OnSubmit="@(() => ChildItemAdded(todo))">
+                        <div style="display: flex; align-items: center; width: 400px;">
+                            <div style="margin-right: 10px">Text:</div>
+                            <InputText @bind-Value="NewItem.Text" class="form-control" style="margin-right: 10px" id="Item" />
+                            <input type="submit" class="btn btn-primary" style="margin-right: 10px" value="Add" />
+                            <input type="reset" class="btn btn-secondary" value="Clear" />
+                        </div>
+                    </EditForm>
+
 
                     @foreach (var subTodo in todo.SubItems)
                     {
@@ -91,6 +109,9 @@
     private ToDoItem CurrentToDo { get; set; }
     private ToDoItem NewItem = new ToDoItem("");
     private HttpClient Client { get; set; }
+    private string highlightStyle = "";
+    private DateTime selectedDate = DateTime.Today;
+
 
     protected override async void OnInitialized()
     {
@@ -153,17 +174,16 @@
         NewItem.Text = "";
     }
 
-    public async void ChildItemAdded(ToDoItem editContext)
+    public async void ChildItemAdded(ToDoItem parentItem)
     {
-        if (editContext is null)
-        {
-            throw new ArgumentNullException(nameof(editContext));
-        }
-
-        var newItem = new ToDoItem(NewItem.Text);
+        var childItem = new ToDoItem(NewItem.Text);
 
         var request = new HttpRequestMessage(HttpMethod.Post,
           "https://localhost:7003/ToDo/add-child-item");
+
+        var subItemWrapper = new ToDoSubItem(parentItem, childItem);
+
+        request.Content = JsonContent.Create(subItemWrapper);
 
         SendRequest(request);
     }
@@ -187,6 +207,14 @@
             Todos = deserialized.ToList();
             StateHasChanged();
         }
+    }
+
+    private void HandleDateChange()
+    {
+        if (selectedDate > DateTime.Today)
+            highlightStyle = "highlighted";
+        else
+            highlightStyle = "";
     }
 
     public string ItemClass(ToDoItem item)

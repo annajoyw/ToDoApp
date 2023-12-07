@@ -124,3 +124,8 @@ body {
 .ico-check::before {
     content: "\2714";
 }
+.highlighted {
+    background-color: yellow; 
+    border: 2px solid orange; 
+    padding: 10px;
+}
