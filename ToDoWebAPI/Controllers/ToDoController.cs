@@ -9,9 +9,6 @@ namespace ToDoWebAPI.Controllers
     [Route("[controller]")]
     public class ToDoController : ControllerBase
     {
-        //private readonly IList<ToDoItem> _todoItems = new List<ToDoItem> {
-        //    new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }) };
-
         private IToDoService _todoService;
         private readonly ILogger<ToDoController> _logger;
 

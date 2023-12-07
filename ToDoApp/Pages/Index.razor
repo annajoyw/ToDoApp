@@ -53,20 +53,10 @@
 
             <Card>
                 <CardBody>
-                    @* <ToDoItemForm OnItemAdded="@GetItems" CurrentToDoItem=todo />*@
-                    @* <form onSubmit="@(() => ChildItemAdded(todo))">
-                        <div class="form-group">
-                        <label for="inputField">Enter Text:</label>
-                        <input type="text" class="form-control" id="inputField" @bind="@NewItem.Text" />
-                        </div>*@
-                    <!-- Hidden input to hold the parameter value -->
-                    @*<input type="hidden" id="hiddenParam" @bind="@todo" />*@
-
-                    @*  <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>*@ <EditForm Model="@NewItem" OnSubmit="@(() => ChildItemAdded(todo))">
-                        <div style="display: flex; align-items: center; width: 400px;">
-                            <div style="margin-right: 10px">Text:</div>
-                            <InputText @bind-Value="NewItem.Text" class="form-control" style="margin-right: 10px" id="Item" />
+                    <EditForm Model="@NewItem" OnSubmit="@(() => ChildItemAdded(todo))">
+                        <div style="display: flex; align-items: center; width: 500px; margin-right: 50px">
+                            <div style="width:200px">Sub Item Text:</div>
+                            <InputText @bind-Value="NewChildItem.Text" class="form-control" style="margin-right: 10px" id="Item" />
                             <input type="submit" class="btn btn-primary" style="margin-right: 10px" value="Add" />
                             <input type="reset" class="btn btn-secondary" value="Clear" />
                         </div>
@@ -108,10 +98,10 @@
     private IList<ToDoItem> Todos { get; set; } = new List<ToDoItem>();
     private ToDoItem CurrentToDo { get; set; }
     private ToDoItem NewItem = new ToDoItem("");
+    private ToDoItem NewChildItem = new ToDoItem("");
     private HttpClient Client { get; set; }
     private string highlightStyle = "";
     private DateTime selectedDate = DateTime.Today;
-
 
     protected override async void OnInitialized()
     {
@@ -122,6 +112,8 @@
 
     public async void DeleteItem(ToDoItem item)
     {
+        highlightStyle = "";
+
         var request = new HttpRequestMessage(HttpMethod.Post,
            "https://localhost:7003/ToDo/delete");
         request.Content = JsonContent.Create(item);
@@ -133,7 +125,7 @@
     {
         var request = new HttpRequestMessage(HttpMethod.Post,
            "https://localhost:7003/ToDo/delete-child-item");
-        var subItemWrapper = new ToDoSubItem(item, subTodoItem);
+        var subItemWrapper = new ToDoSubItemWrapper(item, subTodoItem);
         request.Content = JsonContent.Create(subItemWrapper);
 
         SendRequest(request);
@@ -154,7 +146,7 @@
         var request = new HttpRequestMessage(HttpMethod.Post,
             "https://localhost:7003/ToDo/toggle-completed-child-item");
 
-        var subItemWrapper = new ToDoSubItem(item, subTodoItem);
+        var subItemWrapper = new ToDoSubItemWrapper(item, subTodoItem);
 
         request.Content = JsonContent.Create(subItemWrapper);
 
@@ -176,12 +168,12 @@
 
     public async void ChildItemAdded(ToDoItem parentItem)
     {
-        var childItem = new ToDoItem(NewItem.Text);
+        var childItem = new ToDoItem(NewChildItem.Text);
 
         var request = new HttpRequestMessage(HttpMethod.Post,
           "https://localhost:7003/ToDo/add-child-item");
 
-        var subItemWrapper = new ToDoSubItem(parentItem, childItem);
+        var subItemWrapper = new ToDoSubItemWrapper(parentItem, childItem);
 
         request.Content = JsonContent.Create(subItemWrapper);
 

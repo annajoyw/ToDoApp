@@ -6,15 +6,12 @@ namespace ToDoApp.Services
     {
         private readonly IList<ToDoItem> _todoItems = new List<ToDoItem>
         {
-            new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }, DateTime.Now) };
-        // private readonly ToDoItem _selectedItem;
+            new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }, DateTime.Now) 
+        };
 
         public ToDoService()
         {
-            //_todoItems = new List<ToDoItem> {
-            //new ToDoItem("Wash Clothes", 
-            //             new List<ToDoItem> { new ToDoItem("Get Detergent") },
-            //             DateTime.Now.AddDays(1))};
+
         }
 
         public void AddChildItem(ToDoSubItemWrapper item)
@@ -57,6 +54,16 @@ namespace ToDoApp.Services
             var parentItem = _todoItems.FirstOrDefault(x => x.Text == item.ParentTodo.Text);
             var childItem = parentItem.SubItems.FirstOrDefault(x => x.Text == item.ChildTodo.Text);
             childItem.Completed = !childItem.Completed;
+            bool allItemsCompleted = parentItem.SubItems.All(x => x.Completed);
+            if (allItemsCompleted)
+            {
+                parentItem.Completed = true;
+            }
+            else
+            {
+                parentItem.Completed = false;
+            }
+                
         }
     }
 }
