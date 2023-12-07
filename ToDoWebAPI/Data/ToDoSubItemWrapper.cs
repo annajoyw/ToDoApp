@@ -10,8 +10,10 @@ namespace ToDoApp.Data
             ParentTodo = parentTodo;
             ChildTodo = childTodo;
         }
+
         [JsonPropertyName("parentTodo")]
         public ToDoItem ParentTodo { get; set; }
+
         [JsonPropertyName("childTodo")]
         public ToDoItem ChildTodo { get; set; }
     }

@@ -6,7 +6,7 @@ namespace ToDoApp.Services
     {
         private readonly IList<ToDoItem> _todoItems = new List<ToDoItem>
         {
-            new ToDoItem("Wash Clothes", new List<ToDoItem>{new ToDoItem("Get Detergent") }, DateTime.Now) 
+            new ToDoItem("Laundry Day!", new List<ToDoItem>{new ToDoItem("Buy Detergent") }, DateTime.Now) 
         };
 
         public ToDoService()
@@ -62,8 +62,7 @@ namespace ToDoApp.Services
             else
             {
                 parentItem.Completed = false;
-            }
-                
+            }   
         }
     }
 }
