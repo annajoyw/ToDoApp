@@ -5,6 +5,7 @@
 @using System
 @using System.Collections.Generic
 @inject IHttpClientFactory ClientFactory
+@inject IServiceProvider ServiceProvider
 
 <PageTitle>Todo List</PageTitle>
 
@@ -21,14 +22,14 @@
 </div>
 
 <div class="border" style="padding: 20px; margin-top: 20px;">
-    <div style="display: flex; flex-direction: column" class="@highlightStyle">
+    <div style="display: flex; flex-direction: column" >
         @foreach (var todo in Todos)
         {
-            <div style="display: flex; margin-bottom: 10px;">
+            <div style="display: flex; margin-bottom: 10px;"  >
 
-                <div style="display: flex; align-items: center;margin-bottom: 10px;">
+                <div style="display: flex; align-items: center;margin-bottom: 10px;" >
 
-                    <div class="@ItemClass(todo)" style="width: 280px;">@todo.Text</div>
+                    <div class="@ItemClass(todo) " style="width: 280px;">@todo.Text</div>
                 </div>
                 @if (todo.Completed)
                 {
@@ -45,8 +46,8 @@
                 <div style="width: 110px">
                     <button class="ico-times" role="img" aria-label="Delete" onclick="@(() => DeleteItem(todo))"></button>
                 </div>
-                <div>
-                    <DateInput @oninput="@(() => HandleDateChange())" @bind-Value="selectedDate" Placeholder="Enter Date" />
+                <div class=@HighlightClass(todo.Deadline)>
+                    <DateInput @bind-Value="todo.Deadline"    Placeholder="Enter Date" />
                 </div>
 
             </div>
@@ -99,7 +100,7 @@
     private ToDoItem NewItem = new ToDoItem("");
     private ToDoItem NewChildItem = new ToDoItem("");
     private HttpClient Client { get; set; }
-    private string highlightStyle = "";
+
     private DateTime selectedDate = DateTime.Today;
 
     protected override async void OnInitialized()
@@ -176,6 +177,8 @@
 
         request.Content = JsonContent.Create(subItemWrapper);
 
+        NewChildItem.Text = "";
+
         SendRequest(request);
     }
 
@@ -196,28 +199,23 @@
             using var responseStream = await response.Content.ReadAsStreamAsync();
             var deserialized = await JsonSerializer.DeserializeAsync<IEnumerable<ToDoItem>>(responseStream);
             Todos = deserialized.ToList();
-            StateHasChanged();
+            UpdateUI();
         }
     }
 
-    private void HandleDateChange()
+    private void UpdateUI()
     {
-        if (selectedDate > DateTime.Today)
-            highlightStyle = "highlighted";
-        else
-            highlightStyle = "";
+        StateHasChanged();
+    }
+
+    private string highlightStyle = "";
+    public string HighlightClass(DateTime date)
+    {
+        return date < DateTime.Today ? "highlighted" : "";
     }
 
     public string ItemClass(ToDoItem item)
     {
         return item.Completed ? "item-completed" : "";
     }
-
-    //Collapse collapsableSubList = default!;
-
-    //private async Task ShowContentAsync()
-    //{
-    //    await collapsableSubList.ToggleAsync();
-
-    //}
 }
